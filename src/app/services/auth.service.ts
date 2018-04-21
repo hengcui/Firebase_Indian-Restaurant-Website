@@ -32,18 +32,18 @@ export class AuthService {
 
   }
 
-  logIn(user: any){
+  logIn(user: any) {
     this.afAuth.auth.signInWithEmailAndPassword(user.username, user.password)
     .then(res => console.log(res))
     .catch(function(error) {
       // Handle Errors here.
-      var errorCode = error.code;
-      var errorMessage = error.message;
+      const errorCode = error.code;
+      const errorMessage = error.message;
     });
   }
 
   logOut() {
-    this.afAuth.auth.signOut();    
+    this.afAuth.auth.signOut();
   }
 
   googleLogin() {

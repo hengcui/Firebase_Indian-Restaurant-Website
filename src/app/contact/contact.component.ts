@@ -85,12 +85,16 @@ export class ContactComponent implements OnInit {
     const form = this.feedbackForm;
 
     for (const field in this.formErrors) {
-      this.formErrors[field] = '';
-      const control = form.get(field);
-      if (control && control.dirty && !control.valid) {
-        const messages = this.validationMessages[field];
-        for (const key in control.errors) {
-          this.formErrors[field] += messages[key] + ' ';
+      if (this.formErrors.hasOwnProperty(field)) {
+        this.formErrors[field] = '';
+        const control = form.get(field);
+        if (control && control.dirty && !control.valid) {
+          const messages = this.validationMessages[field];
+          for (const key in control.errors) {
+            if (control.errors.hasOwnProperty(key)) {
+              this.formErrors[field] += messages[key] + ' ';
+            }
+          }
         }
       }
     }
@@ -98,15 +102,14 @@ export class ContactComponent implements OnInit {
 
   onSubmit() {
     this.feedback = this.feedbackForm.value;
-    console.log(this.feedback);
     this.showForm = false;
     this.feedbackservice.submitFeedback(this.feedback)
-      .subscribe(feedback => {
-         this.submitted = feedback;
-         this.feedback = null; 
-         setTimeout(() => { this.submitted = null; this.showForm = true; }, 5000); 
-        },
-        error => console.log(error.status, error.message));
+      .then(doc => {
+        this.submitted = this.feedback;
+        this.feedback = null;
+        setTimeout(() => { this.submitted = null; this.showForm = true; }, 5000);
+      },
+      error => console.log(error.status, error.message));
     this.feedbackForm.reset({
       firstname: '',
       lastname: '',

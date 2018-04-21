@@ -59,16 +59,17 @@ export class FavoriteService {
   }
 
   deleteFavorite(id: string): Promise<void> {
-    var db = firebase.firestore();
+    const db = firebase.firestore();
     if (this.userId) {
-      return db.collection('favorites').where('user', '==', this.userId).where('dish','==', id).get()
+      return db.collection('favorites').where('user', '==', this.userId).where('dish', '==', id).get()
       .then(doc => {
         doc.forEach(doc => {
-          return db.doc('favorites/' + doc.id).delete()
+          console.log(db.doc('favorites/' + doc.id).delete());
+          return;
         })
       });
-    }    
-    else
-      return Promise.reject(new Error("No User Logged In!"));
+    } else {
+      return Promise.reject(new Error('No User Logged In!'));
+    }
   }
 }

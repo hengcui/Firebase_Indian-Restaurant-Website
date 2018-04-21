@@ -19,7 +19,7 @@ import { flyInOut, expand } from '../animations/app.animation';
 })
 export class FavoritesComponent implements OnInit {
 
-  favorites = { user: "", dishes: []};
+  favorites = { user: '', dishes: []};
   favDishes: FavDish[];
   delete: boolean;
   errMess: string;
@@ -32,15 +32,19 @@ export class FavoritesComponent implements OnInit {
   ngOnInit() {
     this.favoriteService.getFavorites()
       .subscribe(favorites => {
-        this.favorites = { user: "", dishes: []};        
+        console.log('Successfully got favorite lists from favorite service');
+        this.favorites = { user: '', dishes: []};
         favorites.forEach(favorite => {
           this.dishservice.getDish(favorite.dish)
             .subscribe(dish => {
               this.favorites.dishes.push(dish);
-            })      
+            })
         })
       },
-      errmess => this.errMess = <any>errmess);
+      errmess => {
+        console.log('fail to get favorite lists from favorites service');
+        this.errMess = <any>errmess;
+      });
   }
 
   deleteFavorite(id: string) {
@@ -48,7 +52,7 @@ export class FavoritesComponent implements OnInit {
       .then(() => {
         this.favoriteService.getFavorites()
         .subscribe(favorites => {
-          this.favorites = { user: "", dishes: []};        
+          this.favorites = { user: '', dishes: []};
           favorites.forEach(favorite => {
             this.dishservice.getDish(favorite.dish)
               .subscribe(dish => {
@@ -58,7 +62,6 @@ export class FavoritesComponent implements OnInit {
         })
       },
       errmess => this.errMess = <any>errmess);
-    this.delete = false;
   }
 
 }

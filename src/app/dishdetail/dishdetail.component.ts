@@ -33,7 +33,7 @@ export class DishdetailComponent implements OnInit {
   next: String;
   errMess: string;
   visibility = 'shown';
-  favorite: boolean = false;
+  favorite: boolean;
 
   formErrors = {
     'author': '',
@@ -42,7 +42,7 @@ export class DishdetailComponent implements OnInit {
 
   validationMessages = {
     'comment': {
-      'required':      'Comment is required.'
+      'required': 'Comment is required.'
     }
   };
 
@@ -53,7 +53,7 @@ export class DishdetailComponent implements OnInit {
     private route: ActivatedRoute,
     private location: Location,
     private fb: FormBuilder,
-    @Inject('BaseURL') private BaseURL) { }
+    @Inject('BaseURL') public BaseURL) {}
 
   ngOnInit() {
 
@@ -62,26 +62,26 @@ export class DishdetailComponent implements OnInit {
     this.dishservice.getDishIds().subscribe(dishIds => this.dishIds = dishIds);
     this.route.params
       .switchMap((params: Params) => { this.visibility = 'hidden'; return this.dishservice.getDish(params['id']); })
-      .subscribe(dish => { 
+      .subscribe(dish => {
           this.dish = dish;
           this.dishservice.getComments(this.dish._id)
           .subscribe(comments => this.dish.comments = comments);
-          this.setPrevNext(dish._id); 
+          this.setPrevNext(dish._id);
           this.visibility = 'shown';
           this.favoriteService.isFavorite(this.dish._id)
-            .then(value =>{ 
+            .then(value => {
               this.favorite = value;
-              console.log("Dishdetail favorite ", this.favorite);              
+              console.log('Dishdetail favorite ', this.favorite);
             });
         },
         errmess => this.errMess = <any>errmess);
   }
 
   setPrevNext(dishId: String) {
-    if(this.dishIds) {
-      let index = this.dishIds.indexOf(dishId);
-      this.prev = this.dishIds[(this.dishIds.length + index - 1)%this.dishIds.length];
-      this.next = this.dishIds[(this.dishIds.length + index + 1)%this.dishIds.length];
+    if (this.dishIds) {
+      const index = this.dishIds.indexOf(dishId);
+      this.prev = this.dishIds[(this.dishIds.length + index - 1) % this.dishIds.length];
+      this.next = this.dishIds[(this.dishIds.length + index + 1) % this.dishIds.length];
     }
   }
 
@@ -102,13 +102,12 @@ export class DishdetailComponent implements OnInit {
   }
 
   onSubmit() {
-    console.log(this.commentForm.value);
     this.dishservice.postComment(this.dish._id, this.commentForm.value)
       .then(() => {
         this.dishservice.getComments(this.dish._id)
           .subscribe(comments => this.dish.comments = comments);
       },
-      err => console.log("Error ", err));
+      err => console.log('Error ', err));
     this.commentForm.reset({
       rating: 5,
       comment: ''
@@ -120,23 +119,31 @@ export class DishdetailComponent implements OnInit {
     if (!this.commentForm) { return; }
     const form = this.commentForm;
     for (const field in this.formErrors) {
-      // clear previous error message (if any)
-      this.formErrors[field] = '';
-      const control = form.get(field);
-      if (control && control.dirty && !control.valid) {
-        const messages = this.validationMessages[field];
-        for (const key in control.errors) {
-          this.formErrors[field] += messages[key] + ' ';
+      if (this.formErrors.hasOwnProperty(field)) {
+        this.formErrors[field] = '';
+        const control = form.get(field);
+        if (control && control.dirty && !control.valid) {
+          const messages = this.validationMessages[field];
+          for (const key in control.errors) {
+            if (control.errors.hasOwnProperty(key)) {
+              this.formErrors[field] += messages[key] + ' ';
+            }
+          }
         }
       }
     }
   }
 
-  addToFavorites() {
-    console.log("Add to Favorites")
-    if (!this.favorite)
+  addOrRemoveFavorites() {
+    if (!this.favorite) {
       this.favoriteService.postFavorite(this.dish._id)
-        .then(favorites => { console.log(favorites); this.favorite = true; })
-        .catch(err => console.log("Error ", err));
+        .then(favorites => { this.favorite = true; })
+        .catch(err => console.log('Error ', err));
+    } else {
+      this.favoriteService.deleteFavorite(this.dish._id)
+        .then(favorites => { this.favorite = false; })
+        .catch(err => { console.log('Error ', err)});
+    }
   }
+
 }

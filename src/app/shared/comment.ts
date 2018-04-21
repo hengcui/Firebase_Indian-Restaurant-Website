@@ -1,6 +1,9 @@
+import { Author } from './author';
+
 export class Comment {
-    rating: number;
+    author: Author;
     comment: string;
-    author: string;
-    date: string;
+    rating: string;
+    updatedAt: string;
+    createdAt: string;
 }

@@ -11,7 +11,6 @@ import 'rxjs/add/operator/catch';
 export class DishService {
 
   private currentUser: firebase.User = null;
-  
   constructor(private afs: AngularFirestore,
     private authService: AuthService ) {
       this.authService.getAuthState()
@@ -37,7 +36,7 @@ export class DishService {
   }
 
   getDish(id: string): Observable<Dish> {
-    return this.afs.doc<Dish>('dishes/'+ id).snapshotChanges()
+    return this.afs.doc<Dish>('dishes/' + id).snapshotChanges()
     .map(action => {
         const data = action.payload.data() as Dish;
         const _id = action.payload.id;
@@ -53,7 +52,7 @@ export class DishService {
         const _id = action.payload.doc.id;
         return { _id, ...data };
       })[0];
-    });  
+    });
   }
 
   getDishIds(): Observable<String[] | any> {
@@ -67,17 +66,17 @@ export class DishService {
       return this.afs.collection('dishes').doc(dishId).collection('comments')
         .add({
           author: {
-            "_id": this.currentUser.uid, 
-            "firstname" : this.currentUser.displayName ? this.currentUser.displayName : this.currentUser.email
+            '_id': this.currentUser.uid,
+            'firstname' : this.currentUser.displayName ? this.currentUser.displayName : this.currentUser.email
           },
-          rating: comment.rating, 
+          rating: comment.rating,
           comment: comment.comment,
           createdAt: firebase.firestore.FieldValue.serverTimestamp(),
           updatedAt: firebase.firestore.FieldValue.serverTimestamp()
         });
-    }
-    else
-      return Promise.reject(new Error("No User Logged In!"));
+    } else {
+      return Promise.reject(new Error('No User Logged In!'));
+    };
   }
 
   getComments(dishId: string): Observable<any> {

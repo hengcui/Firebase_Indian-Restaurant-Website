@@ -11,11 +11,11 @@ import { ContactComponent } from '../contact/contact.component';
 import { FavoritesComponent } from '../favorites/favorites.component';
 
 export const routes: Routes = [
-  { path: 'home',  component: HomeComponent },
-  {path: 'aboutus', component: AboutComponent},
-  { path: 'menu',     component: MenuComponent },
-  { path: 'favorites',     component: FavoritesComponent },
-  { path: 'contactus',     component: ContactComponent },
-  { path: 'dishdetail/:id',     component: DishdetailComponent },
+  { path: 'home', component: HomeComponent },
+  { path: 'aboutus', component: AboutComponent },
+  { path: 'menu', component: MenuComponent },
+  { path: 'favorites', component: FavoritesComponent },
+  { path: 'contactus', component: ContactComponent },
+  { path: 'dishdetail/:id', component: DishdetailComponent },
   { path: '', redirectTo: '/home', pathMatch: 'full' }
 ];
