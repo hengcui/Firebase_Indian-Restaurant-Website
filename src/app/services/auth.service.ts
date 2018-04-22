@@ -34,7 +34,7 @@ export class AuthService {
 
   logIn(user: any) {
     this.afAuth.auth.signInWithEmailAndPassword(user.username, user.password)
-    .then(res => console.log(res))
+    .then(res => console.log('Got Login Information: ', res))
     .catch(function(error) {
       // Handle Errors here.
       const errorCode = error.code;
